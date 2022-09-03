@@ -13,7 +13,6 @@ class SeriesController extends Controller
 {
   public function __construct(private SeriesRepository $seriesRepository)
   {
-
   }
 
   //Busca todas as séries ou filtra pelo nome
@@ -35,9 +34,13 @@ class SeriesController extends Controller
   }
 
   //busca uma unica serie - http://127.0.0.1:8000/api/series/20
-  public function show(Series $series)
+  public function show(int $series)
   {
-    return $series;
+    $seriesModel = Series::find($series);
+    if ($seriesModel === null) {
+      return response()->json(['message' => 'Series not found'], 404);
+    };
+    return $seriesModel;
   }
 
   //atualiza uma serie
@@ -54,6 +57,4 @@ class SeriesController extends Controller
     Series::destroy($series);
     return response()->noContent();
   }
-
-
 }

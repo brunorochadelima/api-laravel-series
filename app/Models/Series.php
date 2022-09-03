@@ -11,13 +11,17 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class Series extends Model
 {
     use HasFactory;
-    protected $fillable = ['nome'];
-    // protected $fillable = ['nome', 'cover'];
+    protected $fillable = ['nome', 'cover'];
     protected $appends = ['links'];
 
     public function seasons()
     {
         return $this->hasMany(Season::class, 'series_id');
+    }
+
+    //aoc lamar pega todos os episodios de todas as temporadas 
+    public function episodes() {
+        return $this->hasManyThrough(Episode::class, Season::class);
     }
 
     //Escopo global ordenação

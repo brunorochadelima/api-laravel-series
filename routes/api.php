@@ -52,7 +52,17 @@ Route::post('/login', function (Request $request) {
         
     dd($user);
 
-
- 
-
 });
+
+//rota busca todas tempordas de uma serie, depois pode-se extrair para um controller para ficar mais organizado
+
+Route::get('/series/{series}/seasons', function(Series $series) {
+   return $series->seasons;
+});
+
+
+// busca todos os episódios independente da temporada
+Route::get('/series/{series}/episodes', function(Series $series) {
+    return $series->episodes;
+ });
+ 
