@@ -35,10 +35,19 @@ class SeriesController extends Controller
     public function store(SeriesFormRequest $request)
     {
         // dd($request->file('cover'));
-        $coverPath = $request->hasFile('cover')
-            ? $request->file('cover')->store('series_cover', 'public')
-            : null;
+       
+        // nome do arquivo
+        $fileName = $nomeimagem = $request->file('cover')->getClientOriginalName();
+        $fileNameSemEspaco = str_replace(' ', '_', $fileName);
+        $extension = $nomeimagem = $request->file('cover')->getClientOriginalExtension();
+
+        //pega arquivo salva na pasta series cover como o nome do arquivo na pasta public
+        $coverPath = $request->file('cover')->storeAs('series_cover', $fileNameSemEspaco.'_'.time().'.'.$extension, 'public');
+        
+        //adiciona no request o coverPath pois ele não foi adicionado antes na interface SeriesFormRequest
         $request->coverPath = $coverPath;
+        
+
         $serie = $this->repository->add($request);
         \App\Events\SeriesCreated::dispatch(
             $serie->nome,
