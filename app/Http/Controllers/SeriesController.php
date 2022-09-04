@@ -10,6 +10,8 @@ use App\Repositories\SeriesRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+
 
 class SeriesController extends Controller
 {
@@ -43,7 +45,7 @@ class SeriesController extends Controller
 
         //pega arquivo salva na pasta series cover como o nome do arquivo na pasta public
         $coverPath = $request->file('cover')->storeAs('series_cover', $fileNameSemEspaco.'_'.time().'.'.$extension, 'public');
-        
+
         //adiciona no request o coverPath pois ele não foi adicionado antes na interface SeriesFormRequest
         $request->coverPath = $coverPath;
         
@@ -63,6 +65,8 @@ class SeriesController extends Controller
     public function destroy(Series $series)
     {
         $series->delete();
+        
+       \App\Jobs\DeleteSeriesCover::dispatch($series->cover); // apaga a imagem cover
 
         return to_route('series.index')
             ->with('mensagem.sucesso', "Série '{$series->nome}' removida com sucesso");
